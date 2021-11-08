@@ -11,8 +11,8 @@ import (
 const defaultTTL = 3600
 
 type Secret struct {
-	APIKey    string
-	APISecret string
+	APIKey    string `survey:"key"`
+	APISecret string `survey:"secret"`
 }
 
 type Client struct {
@@ -33,8 +33,9 @@ func New(secret Secret) *Client {
 	}
 }
 
-func (c Client) EnsureRecordSimplified(domainAddr string, type_ string, value string) error {
-	parts := strings.Split(domainAddr, ".")
+// EnsureRecordSimplified FQDN （Fully Qualified Domain Name）
+func (c Client) EnsureRecordSimplified(fqdn string, type_ string, value string) error {
+	parts := strings.Split(fqdn, ".")
 	if len(parts) < 2 {
 		return errors.New("invalid domain")
 	}
@@ -42,7 +43,7 @@ func (c Client) EnsureRecordSimplified(domainAddr string, type_ string, value st
 	// example.com
 	if len(parts) == 2 {
 		name = "@"
-		domain = domainAddr
+		domain = fqdn
 	} else {
 		// abc.example.com
 		name = strings.Join(parts[:len(parts)-2], ".")
